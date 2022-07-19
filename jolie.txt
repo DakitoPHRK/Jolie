@@ -1,1 +1,1 @@
-& echo "test" > temp
+;echo test > temp

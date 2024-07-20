@@ -1,33 +1,71 @@
 #!/bin/sh
-
-# Crear el script intermedio para gestionar el estado de Wireguard
 cat << 'EOF' > /usr/lib/wireguard/wps_button.sh
 #!/bin/sh
 
 STATE_FILE="/tmp/wireguard_state"
+LOG_FILE="/tmp/wireguard_log"
+
+log_message() {
+    echo "$(date): $1" >> $LOG_FILE
+}
 
 if [ ! -f $STATE_FILE ]; then
-    # Si el archivo de estado no existe, crear y asumir que Wireguard está detenido
     echo "stopped" > $STATE_FILE
 fi
 
 STATE=$(cat $STATE_FILE)
 
-if [ "$STATE" = "stopped" ]; then
-    # Iniciar Wireguard y actualizar el estado
-    /bin/sh /usr/lib/wireguard/startvpn.sh Config
-    echo "started" > $STATE_FILE
-else
-    # Detener Wireguard y actualizar el estado
-    /bin/sh /usr/lib/wireguard/stopvpn.sh Config
-    echo "stopped" > $STATE_FILE
-fi
-EOF
+log_message "Estado actual: $STATE"
 
-# Hacer que el script intermedio sea ejecutable
+case "$STATE" in
+    "stopped")
+        log_message "Iniciando Wireguard con perfil Config"
+        /bin/sh /usr/lib/wireguard/startvpn.sh Config
+        if [ $? -eq 0 ]; then
+            echo "Config" > $STATE_FILE
+            log_message "Wireguard iniciado con perfil Config"
+        else
+            log_message "Error al iniciar Wireguard con perfil Config"
+        fi
+        ;;
+    "Config")
+        log_message "Deteniendo Wireguard con perfil Config"
+        /bin/sh /usr/lib/wireguard/stopvpn.sh Config
+        if [ $? -eq 0 ]; then
+            sleep 10 # Esperar más tiempo para asegurar que Wireguard se detenga completamente
+            log_message "Iniciando Wireguard con perfil Configvps"
+            /bin/sh /usr/lib/wireguard/startvpn.sh Configvps
+            if [ $? -eq 0 ]; then
+                echo "Configvps" > $STATE_FILE
+                log_message "Wireguard iniciado con perfil Configvps"
+            else
+                log_message "Error al iniciar Wireguard con perfil Configvps"
+            fi
+        else
+            log_message "Error al detener Wireguard con perfil Config"
+        fi
+        ;;
+    "Configvps")
+        log_message "Deteniendo Wireguard con perfil Configvps"
+        /bin/sh /usr/lib/wireguard/stopvpn.sh Configvps
+        if [ $? -eq 0 ]; then
+            sleep 10 # Esperar más tiempo para asegurar que Wireguard se detenga completamente
+            log_message "Iniciando Wireguard con perfil Config"
+            /bin/sh /usr/lib/wireguard/startvpn.sh Config
+            if [ $? -eq 0 ]; then
+                echo "Config" > $STATE_FILE
+                log_message "Wireguard iniciado con perfil Config"
+            else
+                log_message "Error al iniciar Wireguard con perfil Config"
+            fi
+        else
+            log_message "Error al detener Wireguard con perfil Configvps"
+        fi
+        ;;
+esac
+EOF
 chmod +x /usr/lib/wireguard/wps_button.sh
 
-# Configurar el archivo /etc/rc.button/wps para usar el nuevo script
 cat << 'EOF' > /etc/rc.button/wps
 #!/bin/sh
 
@@ -37,11 +75,4 @@ case "$ACTION" in
         ;;
 esac
 EOF
-
-# Hacer que el archivo /etc/rc.button/wps sea ejecutable
 chmod +x /etc/rc.button/wps
-echo "El router sera reiniciado..."
-sleep 3
-
-# Reiniciar el router para aplicar los cambios
-reboot

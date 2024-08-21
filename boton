@@ -1,0 +1,34 @@
+#!/bin/sh
+
+cat << 'EOF' > /usr/lib/wireguard/wps_button.sh
+#!/bin/sh
+
+STATE_FILE="/tmp/wireguard_state"
+
+if [ ! -f $STATE_FILE ]; then
+    echo "stopped" > $STATE_FILE
+fi
+
+STATE=$(cat $STATE_FILE)
+
+if [ "$STATE" = "stopped" ]; then
+    /bin/sh /usr/lib/wireguard/startvpn.sh Config
+    echo "started" > $STATE_FILE
+else
+    /bin/sh /usr/lib/wireguard/stopvpn.sh Config
+    echo "stopped" > $STATE_FILE
+fi
+EOF
+
+chmod +x /usr/lib/wireguard/wps_button.sh
+
+cat << 'EOF' > /etc/rc.button/wps
+#!/bin/sh
+
+case "$ACTION" in
+    pressed)
+        /usr/lib/wireguard/wps_button.sh
+        ;;
+esac
+EOF
+chmod +x /etc/rc.button/wps

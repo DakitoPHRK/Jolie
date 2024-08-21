@@ -31,4 +31,5 @@ case "$ACTION" in
         ;;
 esac
 EOF
+
 chmod +x /etc/rc.button/wps

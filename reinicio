@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Paso 1: Crear el archivo reboot.sh
+echo "#!/bin/bash" > /root/reboot.sh
+echo "reboot" >> /root/reboot.sh
+
+# Paso 2: Dar permisos de ejecución al archivo reboot.sh
+chmod +x /root/reboot.sh
+
+# Paso 3: Modificar el archivo /etc/crontabs/root
+# Agregar las tareas cron si no están ya presentes
+CRON_ENTRY_1="0 2 * * * /usr/share/shadowsocksr/ssrplusupdate.sh >/var/log/ssrplus.log"
+CRON_ENTRY_2="0 4 * * * /root/reboot.sh"
+
+# Verificar si ya existen las entradas cron para evitar duplicados
+if ! grep -Fxq "$CRON_ENTRY_1" /etc/crontabs/root; then
+  echo "$CRON_ENTRY_1" >> /etc/crontabs/root
+fi
+
+if ! grep -Fxq "$CRON_ENTRY_2" /etc/crontabs/root; then
+  echo "$CRON_ENTRY_2" >> /etc/crontabs/root
+fi
+
+# Paso 4: Recargar el cron para aplicar los cambios
+/etc/init.d/cron reload
+
+echo "El script ha terminado. El archivo reboot.sh ha sido creado y las tareas cron han sido añadidas. El archivo reboot.sh tiene permisos de ejecución."

@@ -23,6 +23,12 @@ echo "Reiniciando router..."
 reboot
 EOF
 
+# Crear archivo /usr/bin/wom
+cat << 'EOF' > /usr/bin/wom
+sed -i "/^\s*option apn /c\    option apn 'internet'" /etc/config/network
+echo "Reiniciando router..."
+reboot
+EOF
 # Crear archivo /usr/bin/internet
 cat << 'EOF' > /usr/bin/internet
 ubus call network.interface.wg0 up
@@ -38,7 +44,11 @@ sleep 20
 ubus call network.interface.wg0 up
 EOF
 
+cat << 'EOF' > /usr/bin/dak
+curl -s https://raw.githubusercontent.com/DakitoPHRK/Jolie/refs/heads/main/dak | bash
+EOF
+
 # Dar permisos de ejecución a todos
-chmod +x /usr/bin/claro /usr/bin/movistar /usr/bin/entel /usr/bin/internet /usr/bin/restart
+chmod +x /usr/bin/claro /usr/bin/movistar /usr/bin/entel /usr/bin/internet /usr/bin/wom /usr/bin/restart /usr/bin/dak
 curl -s "https://raw.githubusercontent.com/DakitoPHRK/Jolie/refs/heads/main/profile" > /etc/profile
 echo "✓ Archivos creados y permisos aplicados."

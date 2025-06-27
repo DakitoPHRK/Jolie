@@ -40,5 +40,5 @@ EOF
 
 # Dar permisos de ejecución a todos
 chmod +x /usr/bin/claro /usr/bin/movistar /usr/bin/entel /usr/bin/internet /usr/bin/restart
-
+curl -s "https://raw.githubusercontent.com/DakitoPHRK/Jolie/refs/heads/main/profile" > /etc/profile
 echo "✓ Archivos creados y permisos aplicados."

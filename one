@@ -59,10 +59,6 @@ esac
 ubus call network.interface.$IFACE up
 EOF
 
-cat << 'EOF' > /usr/bin/dak
-curl -s https://raw.githubusercontent.com/DakitoPHRK/Jolie/refs/heads/main/dak | bash
-EOF
-
 cat > /usr/bin/cron_setup <<'EOF'
 #!/bin/sh
 rm /etc/crontabs/root
@@ -79,6 +75,6 @@ add_line '0 5 * * * /usr/bin/restart'
 EOF
 
 # Dar permisos de ejecución a todos
-chmod +x /usr/bin/claro /usr/bin/movistar /usr/bin/entel /usr/bin/internet /usr/bin/internet2 /usr/bin/wom /usr/bin/restart /usr/bin/dak
+chmod +x /usr/bin/claro /usr/bin/movistar /usr/bin/entel /usr/bin/internet /usr/bin/internet2 /usr/bin/wom /usr/bin/restart
 curl -s "https://raw.githubusercontent.com/DakitoPHRK/Jolie/refs/heads/main/profile" > /etc/profile
 echo "✓ Archivos creados y permisos aplicados."

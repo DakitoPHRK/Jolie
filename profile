@@ -86,7 +86,8 @@ print_banner() {
     echo -e "${BOLD_YELLOW} Para cambiar el apn use los comandos:  ${RESET}"
     echo -e "${BOLD_YELLOW} movistar,entel,claro,wom  ${RESET}"
     echo -e "${BOLD_YELLOW} El comando '"internet"' iniciara el servicio de internet para Entel  ${RESET}"
-    echo -e "${BOLD_YELLOW} El comando '"restart"' reiniciará el servicio de internet para Entel  ${RESET}"
+    echo -e "${BOLD_YELLOW} El comando '"internet2"' iniciara el servicio de internet para WOM  ${RESET}"
+    echo -e "${BOLD_YELLOW} El comando '"restart"' reiniciará el servicio de internet para Entel y Wom  ${RESET}"
     echo -e "${BOLD_MAGENTA}==========================================${RESET}"
 }
 

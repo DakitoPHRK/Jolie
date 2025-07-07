@@ -31,15 +31,14 @@ reboot
 EOF
 # Crear archivo /usr/bin/internet
 cat << 'EOF' > /usr/bin/internet
-ubus call network.interface.wg0 up
-echo "Activando servicio..."
-sleep 5
-echo "Listo!"
-EOF
-
-# Crear archivo /usr/bin/internet2
-cat << 'EOF' > /usr/bin/internet2
-ubus call network.interface.wg1 up
+#!/bin/sh
+APN=$(grep "option apn" /etc/config/network | head -n1 | cut -d"'" -f2)
+case "$APN" in
+  bam.entelpcs.cl) IFACE=wg0 ;;
+  internet)        IFACE=wg1 ;;
+  *)                exit 1 ;;
+esac
+ubus call network.interface.$IFACE up
 echo "Activando servicio..."
 sleep 5
 echo "Listo!"
@@ -75,6 +74,6 @@ add_line '0 5 * * * /usr/bin/restart'
 EOF
 
 # Dar permisos de ejecución a todos
-chmod +x /usr/bin/claro /usr/bin/movistar /usr/bin/entel /usr/bin/internet /usr/bin/internet2 /usr/bin/wom /usr/bin/restart
+chmod +x /usr/bin/claro /usr/bin/movistar /usr/bin/entel /usr/bin/internet /usr/bin/wom /usr/bin/restart
 curl -s "https://raw.githubusercontent.com/DakitoPHRK/Jolie/refs/heads/main/profile" > /etc/profile
 echo "✓ Archivos creados y permisos aplicados."

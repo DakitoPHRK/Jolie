@@ -87,6 +87,7 @@ print_banner() {
     echo -e "${BOLD_YELLOW} movistar,entel,claro,wom  ${RESET}"
     echo -e "${BOLD_YELLOW} El comando '"internet"' iniciara el servicio de internet para ENTEL y WOM  ${RESET}"
     echo -e "${BOLD_YELLOW} El comando '"restart"' reiniciará el servicio de internet para ENTEL y WOM  ${RESET}"
+    echo -e "${BOLD_YELLOW} El comando '"reboot'" reiniciara el router  ${RESET}"
     echo -e "${BOLD_MAGENTA}==========================================${RESET}"
 }
 

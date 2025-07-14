@@ -1,5 +1,5 @@
 #!/bin/sh
-
+rm /etc/crontabs/root
 # Script para crear y dar permisos a los archivos de APN y control
 
 # Crear archivo /usr/bin/claro
@@ -60,7 +60,6 @@ EOF
 
 cat > /usr/bin/cron_setup <<'EOF'
 #!/bin/sh
-rm /etc/crontabs/root
 CRON=/etc/crontabs/root
 
 add_line() {
